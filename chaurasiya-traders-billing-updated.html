@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102b46">
+<title>Chaurasiya Traders | Billing System</title>
+<style>
+:root{--navy:#102b46;--blue:#1769aa;--gold:#f2b544;--bg:#f3f6fa;--ink:#172536;--muted:#687789;--line:#e2e8f0;--green:#16845b;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,"Noto Sans Devanagari",sans-serif}
+header{background:linear-gradient(120deg,#102b46,#174c78);color:white;padding:20px max(18px,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:12px;background:var(--gold);color:#102b46;display:grid;place-items:center;font-weight:900;font-size:20px}.brand h1{font-size:21px;margin:0}.brand p{margin:3px 0 0;color:#d5e3f0;font-size:12px}
+.wrap{max-width:1180px;margin:22px auto;padding:0 16px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab,button{border:0;border-radius:9px;padding:10px 15px;font-weight:650;cursor:pointer}.tab{background:white;color:var(--navy);border:1px solid var(--line)}.tab.active,button.primary{background:var(--blue);color:white}.tab:hover,button:hover{filter:brightness(.96)}button.secondary{background:#e8eef5;color:var(--navy)}button.danger{background:#fff0ee;color:var(--red)}button.small{padding:7px 10px;font-size:12px}
+.grid{display:grid;grid-template-columns:1.5fr .8fr;gap:18px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 4px 16px #1d35570a;margin-bottom:16px}.card h2{font-size:17px;margin:0 0 15px;color:var(--navy)}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid #d6dee8;border-radius:8px;padding:10px;background:white;font:inherit;min-width:0}.field textarea{resize:vertical}.full{grid-column:1/-1}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-size:11px;text-transform:uppercase}td input{width:100%;min-width:65px;border:1px solid #d6dee8;border-radius:6px;padding:7px}.totals{display:grid;gap:9px}.totalrow{display:flex;justify-content:space-between;gap:12px;color:var(--muted)}.totalrow strong{color:var(--ink)}.grand{border-top:1px dashed #cbd5e1;padding-top:12px;font-size:19px;color:var(--navy)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.muted{color:var(--muted)}.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:white;border:1px solid var(--line);border-radius:12px;padding:15px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:22px;color:var(--navy)}.hidden{display:none!important}.empty{text-align:center;padding:30px;color:var(--muted)}.billhead{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.billhead h2{font-size:22px}.pill{display:inline-block;background:#e8f4ef;color:var(--green);padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.statgrid{grid-template-columns:1fr 1fr}.fields{grid-template-columns:1fr}.full{grid-column:auto}.wrap{margin:14px auto}header{padding:16px}.brand h1{font-size:18px}}
+@media print{body{background:white}.no-print,header,.tabs,#dashboard,#history,#settings{display:none!important}.wrap{margin:0;padding:0;max-width:none}.card{border:0;box-shadow:none;padding:0}.grid{display:block}.grid>.card:first-child{display:none}.grid>.card:last-child{display:block}.print-only{display:block!important}#invoicePreview{display:block!important}.print-table{min-width:0}button{display:none!important}}
+.print-only{display:none}
+</style>
+</head>
+<body>
+<header class="no-print">
+ <div class="brand"><div class="logo">CT</div><div><h1>CHAURASIYA TRADERS</h1><p>Billing & Invoice Management System</p></div></div>
+ <div style="font-size:12px;color:#d5e3f0">सरल • तेज़ • मोबाइल फ्रेंडली</div>
+</header>
+<main class="wrap">
+ <nav class="tabs no-print">
+  <button class="tab active" data-tab="billing">नया बिल</button>
+  <button class="tab" data-tab="inventory">सामान / स्टॉक</button>
+  <button class="tab" data-tab="history">बिल हिस्ट्री</button>
+  <button class="tab" data-tab="dashboard">डैशबोर्ड</button>
+  <button class="tab" data-tab="settings">सेटिंग्स</button>
+ </nav>
+ <section id="billing">
+  <div class="grid">
+   <div>
+    <div class="card">
+     <h2>ग्राहक की जानकारी</h2>
+     <div class="fields">
+      <div class="field"><label>ग्राहक का नाम</label><input id="customer" placeholder="ग्राहक का नाम"></div>
+      <div class="field"><label>मोबाइल नंबर</label><input id="phone" inputmode="numeric" placeholder="मोबाइल नंबर"></div>
+      <div class="field full"><label>पता (वैकल्पिक)</label><input id="address" placeholder="ग्राहक का पता"></div>
+      <div class="field"><label>बिल नंबर</label><input id="billNo" readonly></div>
+      <div class="field"><label>तारीख</label><input id="billDate" type="date"></div>
+     </div>
+    </div>
+    <div class="card">
+     <h2>सामान / Products</h2>
+     <div class="tablewrap"><table id="itemsTable"><thead><tr><th style="width:34%">सामान का नाम</th><th>Qty</th><th>Rate (₹)</th><th>Amount</th><th></th></tr></thead><tbody id="itemsBody"></tbody></table></div>
+     <div class="actions no-print"><button class="secondary" id="addRow">+ सामान जोड़ें</button></div>
+    </div>
+    <div class="card no-print">
+     <h2>नोट (वैकल्पिक)</h2><div class="field"><textarea id="notes" rows="2" placeholder="धन्यवाद! फिर पधारें।"></textarea></div>
+    </div>
+   </div>
+   <aside>
+    <div class="card">
+     <h2>बिल का हिसाब</h2>
+     <div class="field" style="margin-bottom:14px"><label>GST (%)</label><input id="gst" type="number" min="0" max="100" value="1.25"></div>
+     <div class="field" style="margin-bottom:14px"><label>Discount (₹)</label><input id="discount" type="number" min="0" value="0"></div>
+     <div class="totals">
+      <div class="totalrow"><span>Subtotal</span><strong id="subtotal">₹0.00</strong></div>
+      <div class="totalrow"><span>GST</span><strong id="gstAmount">₹0.00</strong></div>
+      <div class="totalrow"><span>Discount</span><strong id="discountAmount">− ₹0.00</strong></div>
+      <div class="totalrow grand"><span>कुल रकम</span><strong id="grandTotal">₹0.00</strong></div>
+     </div>
+     <div class="actions no-print"><button class="primary" id="savePrint">बिल सेव करें</button><button class="secondary" id="shareWhatsApp">WhatsApp पर भेजें</button><button class="secondary" id="downloadImage">बिल की Image</button><button class="secondary" id="preview">Preview</button><button class="secondary" id="clear">नया बिल</button></div>
+     <p class="muted" style="font-size:11px;margin-top:12px">बिल इसी ब्राउज़र में सेव होंगे। नियमित रूप से डेटा बैकअप डाउनलोड करें।</p>
+    </div>
+    <div class="card no-print"><h2>दुकान की जानकारी</h2><div id="shopMini" class="muted" style="font-size:13px">सेटिंग्स में दुकान का पता और फोन जोड़ें।</div></div>
+   </aside>
+  </div>
+  <div id="invoicePreview" class="card hidden"></div>
+ </section>
+ <section id="inventory" class="hidden">
+  <div class="card">
+   <h2>नया सामान जोड़ें</h2>
+   <div class="fields">
+    <div class="field"><label>सामान का नाम</label><input id="productName" placeholder="जैसे: तेल 1 लीटर"></div>
+    <div class="field"><label>यूनिट</label><select id="productUnit"><option>पीस</option><option>पैकेट</option><option>बोतल</option><option>किलो</option><option>ग्राम</option><option>लीटर</option><option>डिब्बा</option><option>बोरी</option><option>कार्टन</option></select></div>
+    <div class="field"><label>शुरुआती स्टॉक</label><input id="productStock" type="number" min="0" step="any" placeholder="कितना माल है"></div>
+    <div class="field"><label>खरीद रेट (₹)</label><input id="productPurchase" type="number" min="0" step="any" placeholder="खरीद मूल्य"></div>
+    <div class="field"><label>बिक्री रेट (₹)</label><input id="productSale" type="number" min="0" step="any" placeholder="बिक्री मूल्य"></div>
+    <div class="field"><label>कम स्टॉक अलर्ट</label><input id="productMin" type="number" min="0" step="any" value="5"></div>
+   </div>
+   <div class="actions"><button class="primary" id="addProduct">सामान सेव करें</button></div>
+   <p class="muted" style="font-size:12px">हर सामान एक बार जोड़ें। बाद में बिल बनाते समय लिस्ट से चुनें। नया माल आने पर स्टॉक बढ़ा सकते हैं।</p>
+  </div>
+  <div class="card"><div class="billhead"><h2>मौजूदा स्टॉक</h2><strong id="stockCount">0 सामान</strong></div>
+   <div class="tablewrap"><table style="min-width:650px"><thead><tr><th>सामान</th><th>स्टॉक</th><th>यूनिट</th><th>खरीद रेट</th><th>बिक्री रेट</th><th>स्थिति</th><th>काम</th></tr></thead><tbody id="productsBody"></tbody></table></div>
+   <div id="productsEmpty" class="empty">अभी सामान नहीं जोड़ा है। ऊपर से पहला सामान जोड़ें।</div>
+  </div>
+ </section>
+ <section id="history" class="hidden">
+  <div class="card"><div class="billhead"><h2>बिल हिस्ट्री</h2><input id="searchBills" placeholder="बिल / ग्राहक खोजें" style="max-width:230px;padding:9px;border:1px solid #d6dee8;border-radius:8px"></div>
+   <div class="tablewrap"><table><thead><tr><th>बिल नं.</th><th>तारीख</th><th>ग्राहक</th><th>मोबाइल</th><th>कुल</th><th>Action</th></tr></thead><tbody id="historyBody"></tbody></table></div><div id="historyEmpty" class="empty hidden">अभी कोई बिल सेव नहीं है।</div>
+  </div>
+ </section>
+ <section id="dashboard" class="hidden">
+  <div class="statgrid"><div class="stat"><span>कुल बिल</span><strong id="statBills">0</strong></div><div class="stat"><span>कुल बिक्री</span><strong id="statSales">₹0</strong></div><div class="stat"><span>आज की बिक्री</span><strong id="statToday">₹0</strong></div></div>
+  <div class="card" style="margin-top:16px"><h2>हाल के बिल</h2><div id="recentBills" class="muted">अभी कोई रिकॉर्ड नहीं है।</div></div>
+ </section>
+ <section id="settings" class="hidden">
+  <div class="card"><h2>दुकान की जानकारी सेट करें</h2><div class="fields">
+   <div class="field"><label>दुकान का नाम</label><input id="shopName" value="CHAURASIYA TRADERS"></div>
+   <div class="field"><label>मोबाइल / फोन</label><input id="shopPhone" placeholder="दुकान का फोन"></div>
+   <div class="field full"><label>दुकान का पता</label><input id="shopAddress" placeholder="पूरा पता"></div>
+   <div class="field"><label>GSTIN (वैकल्पिक)</label><input id="shopGst" placeholder="GST नंबर"></div>
+   <div class="field"><label>बिल के नीचे संदेश</label><input id="footerText" value="Thank You! Visit Again."></div>
+   <div class="field"><label>प्रोपराइटर नाम / हस्ताक्षर</label><input id="proprietor" placeholder="जैसे: Pro. Kiran"></div>
+  </div><div class="actions"><button class="primary" id="saveSettings">सेटिंग्स सेव करें</button><button class="secondary" id="exportData">डेटा बैकअप डाउनलोड</button><label class="secondary" style="padding:10px 15px;border-radius:9px;cursor:pointer;font-weight:650">बैकअप Restore<input id="importData" type="file" accept="application/json" hidden></label></div>
+  <p class="muted" style="font-size:12px">यह संस्करण बिल और स्टॉक आपके इसी डिवाइस और ब्राउज़र में रखता है। ब्राउज़र डेटा साफ़ करने से पहले बैकअप ज़रूर लें।</p>
+  </div>
+ </section>
+</main>
+<script>
+const $=id=>document.getElementById(id), money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const KEY='ct_billing_v1', SETTINGS='ct_settings_v1', STOCK='ct_inventory_v1';
+let bills=JSON.parse(localStorage.getItem(KEY)||'[]'), settings=JSON.parse(localStorage.getItem(SETTINGS)||'{}'), products=JSON.parse(localStorage.getItem(STOCK)||'[]');
+if(!settings.name && !settings.address && !settings.phone){
+ settings={name:'CHAURASIYA TRADERS',address:'Karma Bazzar, Siddharth Nagar',phone:'9919496051',gstin:'09GUAPK5751C1ZO',footer:'धन्यवाद! फिर पधारें।'};
+ localStorage.setItem(SETTINGS,JSON.stringify(settings));
+}
+function today(){return new Date().toISOString().slice(0,10)}
+function nextBill(){let n=Number(localStorage.getItem('ct_bill_seq')||0)+1;return 'CT-'+String(n).padStart(4,'0')}
+function setNewBill(){ $('billNo').value=nextBill();$('billDate').value=today();$('customer').value='';$('phone').value='';$('address').value='';$('notes').value='';$('gst').value='1.25';$('discount').value='0';$('itemsBody').innerHTML='';addRow();calc();$('invoicePreview').classList.add('hidden')}
+function productOptions(selected=''){return '<option value="">सामान चुनें</option>'+products.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${esc(p.name)} — स्टॉक: ${p.stock} ${esc(p.unit)}</option>`).join('')}
+function addRow(productId='',qty=1,rate=null){let tr=document.createElement('tr');tr.innerHTML=`<td><select class="pselect" style="width:100%;min-width:145px;border:1px solid #d6dee8;border-radius:6px;padding:8px">${productOptions(productId)}</select><div class="muted stockhint" style="font-size:10px"></div></td><td><input class="qty" type="number" min="0" step="any" value="${qty}"></td><td><input class="rate" type="number" min="0" step="any" value="${rate===null?0:rate}"></td><td class="amount">₹0.00</td><td><button class="danger small no-print remove">×</button></td>`;const sel=tr.querySelector('.pselect');const q=tr.querySelector('.qty'),r=tr.querySelector('.rate');function choose(){let p=products.find(x=>x.id===sel.value);if(p){r.value=rate===null?p.saleRate:rate;tr.querySelector('.stockhint').textContent=`उपलब्ध: ${p.stock} ${p.unit}`;q.max=p.stock}else{r.value=0;tr.querySelector('.stockhint').textContent='';q.removeAttribute('max')}calc()}sel.onchange=()=>{rate=null;choose()};tr.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc));tr.querySelector('.remove').onclick=()=>{tr.remove();if(!$('itemsBody').children.length)addRow();calc()};$('itemsBody').append(tr);if(productId)choose();else if(products.length===1){sel.value=products[0].id;choose()}calc()}
+function totals(){let subtotal=[...document.querySelectorAll('#itemsBody tr')].reduce((s,tr)=>s+(Number(tr.querySelector('.qty').value)||0)*(Number(tr.querySelector('.rate').value)||0),0);let gst=Math.max(0,Number($('gst').value)||0),discount=Math.max(0,Number($('discount').value)||0),tax=Math.max(0,(subtotal-discount)*gst/100);return {subtotal,gstRate:gst,tax,discount,total:Math.max(0,subtotal+tax-discount)}}
+function calc(){[...document.querySelectorAll('#itemsBody tr')].forEach(tr=>{let a=(Number(tr.querySelector('.qty').value)||0)*(Number(tr.querySelector('.rate').value)||0);tr.querySelector('.amount').textContent=money(a)});let t=totals();$('subtotal').textContent=money(t.subtotal);$('gstAmount').textContent=money(t.tax);$('discountAmount').textContent='− '+money(t.discount);$('grandTotal').textContent=money(t.total)}
+function collect(){let items=[...document.querySelectorAll('#itemsBody tr')].map(tr=>{let p=products.find(x=>x.id===tr.querySelector('.pselect').value);return {productId:p?.id||'',name:p?.name||'',unit:p?.unit||'',qty:Number(tr.querySelector('.qty').value)||0,rate:Number(tr.querySelector('.rate').value)||0}}).filter(x=>x.productId&&x.qty>0);return {id:$('billNo').value,date:$('billDate').value||today(),customer:$('customer').value.trim(),phone:$('phone').value.trim(),address:$('address').value.trim(),notes:$('notes').value.trim(),items,...totals()}}
+function shop(){return {name:settings.name||'CHAURASIYA TRADERS',phone:settings.phone||'',address:settings.address||'',gstin:settings.gstin||'',footer:settings.footer||'धन्यवाद! फिर पधारें।'}}
+function renderInvoice(b){let s=shop();$('invoicePreview').innerHTML=`<div style="border:5px solid #142f5b;padding:18px;color:#172536"><div style="background:#142f5b;color:white;text-align:center;border-radius:18px;padding:24px 12px"><div style="font-size:30px;font-weight:800">${esc(s.name)}</div><div style="font-size:18px;font-weight:700;margin-top:8px">${esc(s.address)}, U.P.</div><div style="margin-top:7px">GSTIN: ${esc(s.gstin)} &nbsp; | &nbsp; WhatsApp: ${esc(s.phone)}</div></div><div style="text-align:center;color:#28588f;font-weight:800;margin:20px 0">COLD DRINK &nbsp; • &nbsp; WATER WHOLESALER &nbsp; • &nbsp; GENERAL SUPPLIER</div><div style="background:#edf3fc;border:2px solid #b9cbe3;border-radius:14px;padding:18px;margin-bottom:22px"><b style="font-size:22px;color:#142f5b">BILL &nbsp; ${esc(b.id)}</b><span style="float:right;font-weight:700">Date: ${esc(b.date)}</span><div style="margin-top:15px;font-weight:700">Customer: ${esc(b.customer||'Cash Customer')} ${b.phone?' · '+esc(b.phone):''}</div></div><div class="tablewrap"><table class="print-table" style="min-width:0"><thead><tr style="background:#142f5b;color:white"><th style="color:white">ITEM</th><th style="color:white">QTY</th><th style="color:white">RATE</th><th style="color:white">AMOUNT</th></tr></thead><tbody>${b.items.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${x.qty}</td><td>${money(x.rate)}</td><td><b>${money(x.qty*x.rate)}</b></td></tr>`).join('')}</tbody></table></div><div style="margin:28px 0 0 auto;max-width:390px;background:#edf3fc;border:2px solid #b9cbe3;border-radius:16px;padding:18px"><div class="totalrow"><b>Subtotal</b><b>${money(b.subtotal)}</b></div><div class="totalrow" style="color:#28588f;margin-top:12px"><b>GST (${b.gstRate}%)</b><b>${money(b.tax)}</b></div><div class="totalrow grand" style="background:#142f5b;color:white;border-radius:10px;padding:12px;margin-top:12px"><b style="color:white">TOTAL PAYABLE</b><b style="color:white">${money(b.total)}</b></div></div><h2 style="color:#142f5b;margin-top:50px">Thank You! Visit Again.</h2><div style="text-align:right;color:#28588f;font-size:22px;font-weight:800">${esc(settings.proprietor||'Proprietor')}</div><div style="text-align:center;color:#28588f;font-weight:800;margin-top:55px">★ Your Trust is Our Strength ★</div></div>`;$('invoicePreview').classList.remove('hidden')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function stockCheck(b){let need={};b.items.forEach(x=>need[x.productId]=(need[x.productId]||0)+x.qty);for(let id in need){let p=products.find(x=>x.id===id);if(!p||p.stock<need[id]){alert(`'${p?.name||'सामान'}' का स्टॉक कम है। उपलब्ध: ${p?.stock??0} ${p?.unit||''}, बिल में चाहिए: ${need[id]}`);return false}}return true}
+function commitBill(b){if(bills.some(x=>x.id===b.id)){alert('यह बिल पहले से सेव है। नया बिल बटन दबाएँ।');return false}if(!stockCheck(b))return false;let need={};b.items.forEach(x=>need[x.productId]=(need[x.productId]||0)+x.qty);for(let id in need){let p=products.find(x=>x.id===id);p.stock=Number((p.stock-need[id]).toFixed(3))}localStorage.setItem(STOCK,JSON.stringify(products));bills.unshift(b);localStorage.setItem(KEY,JSON.stringify(bills));localStorage.setItem('ct_bill_seq',String(Number(localStorage.getItem('ct_bill_seq')||0)+1));renderProducts();return true}
+function saveBill(print=true){let b=collect();if(!b.items.length){alert('पहले सामान की लिस्ट से सामान चुनें और मात्रा भरें।');return}if(!commitBill(b))return;renderInvoice(b);renderAll();if(print)window.print()}
+
+
+function invoiceCanvas(b){
+ const s=shop(), scale=2, W=1000, pad=58, rowH=76, top=34;
+ const H=top+190+78+150+60+Math.max(1,b.items.length)*rowH+250+360;
+ const c=document.createElement('canvas');c.width=W*scale;c.height=H*scale;
+ const ctx=c.getContext('2d');ctx.scale(scale,scale);
+ const navy='#142f5b', blue='#28588f', pale='#edf3fc', line='#b9cbe3', ink='#172536';
+ const rr=(x,y,w,h,r,fill,stroke=null,lw=2)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.lineWidth=lw;ctx.strokeStyle=stroke;ctx.stroke()}};
+ ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle=navy;ctx.lineWidth=7;ctx.strokeRect(18,18,W-36,H-36);
+ rr(40,40,W-80,176,24,navy);
+ ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='bold 43px Arial';ctx.fillText(s.name.toUpperCase(),W/2,112);
+ ctx.font='bold 25px Arial';ctx.fillText(s.address+', U.P.',W/2,157);
+ ctx.font='21px Arial';ctx.fillText('GSTIN: '+s.gstin+'  |  WhatsApp: '+s.phone,W/2,193);
+ let y=253;
+ ctx.fillStyle=blue;ctx.font='bold 22px Arial';ctx.fillText('COLD DRINK  •  WATER WHOLESALER  •  GENERAL SUPPLIER',W/2,y);
+ y+=42;rr(40,y,W-80,130,18,pale,line,3);
+ ctx.textAlign='left';ctx.fillStyle=navy;ctx.font='bold 28px Arial';ctx.fillText('BILL',76,y+48);
+ ctx.font='bold 30px Arial';ctx.fillText(b.id,185,y+48);
+ ctx.textAlign='right';ctx.fillStyle=ink;ctx.font='bold 23px Arial';ctx.fillText('Date: '+b.date,W-76,y+48);
+ ctx.textAlign='left';ctx.font='bold 23px Arial';ctx.fillText('Customer: '+(b.customer||'Cash Customer'),76,y+93);
+ if(b.phone){ctx.textAlign='right';ctx.font='19px Arial';ctx.fillText('Mobile: '+b.phone,W-76,y+93);ctx.textAlign='left'}
+ y+=162;
+ const x=40, tw=W-80, headerH=58;
+ rr(x,y,tw,headerH,12,navy);
+ const cols={item:x+30,qty:640,rate:785,amount:950};
+ ctx.fillStyle='#fff';ctx.font='bold 22px Arial';ctx.textAlign='left';ctx.fillText('ITEM',cols.item,y+37);
+ ctx.textAlign='right';ctx.fillText('QTY',cols.qty,y+37);ctx.fillText('RATE',cols.rate,y+37);ctx.fillText('AMOUNT',cols.amount,y+37);
+ y+=headerH;
+ b.items.forEach((it,i)=>{
+   ctx.fillStyle=i%2===0?'#fff':pale;ctx.fillRect(x,y,tw,rowH);
+   ctx.strokeStyle=line;ctx.lineWidth=1;ctx.strokeRect(x,y,tw,rowH);
+   ctx.fillStyle=ink;ctx.font='bold 22px Arial';ctx.textAlign='left';ctx.fillText(it.name.slice(0,34),cols.item,y+47);
+   ctx.font='21px Arial';ctx.textAlign='right';ctx.fillText(String(it.qty),cols.qty,y+47);
+   ctx.fillText('Rs. '+Number(it.rate).toFixed(2),cols.rate,y+47);
+   ctx.font='bold 21px Arial';ctx.fillText('Rs. '+(it.qty*it.rate).toFixed(2),cols.amount,y+47);
+   y+=rowH;
+ });
+ y+=34;
+ const bx=480,bw=480,bh=192;rr(bx,y,bw,bh,20,pale,line,3);
+ let ty=y+51;
+ const sumline=(label,val,emph=false,color=ink)=>{ctx.fillStyle=color;ctx.font=(emph?'bold ':'bold ')+(emph?'25px':'23px')+' Arial';ctx.textAlign='left';ctx.fillText(label,bx+28,ty);ctx.textAlign='right';ctx.fillText(val,bx+bw-28,ty);ty+=48};
+ sumline('Subtotal','Rs. '+b.subtotal.toFixed(2));
+ sumline('GST ('+b.gstRate+'%)','Rs. '+b.tax.toFixed(2),false,blue);
+ rr(bx+18,ty-7,bw-36,55,12,navy);
+ ctx.fillStyle='#fff';ctx.font='bold 24px Arial';ctx.textAlign='left';ctx.fillText('TOTAL PAYABLE',bx+42,ty+29);ctx.textAlign='right';ctx.fillText('Rs. '+b.total.toFixed(2),bx+bw-42,ty+29);
+ y+=bh+95;
+ ctx.fillStyle=navy;ctx.textAlign='left';ctx.font='bold 34px Arial';ctx.fillText('Thank You!  Visit Again.',70,y);
+ ctx.textAlign='right';ctx.fillStyle=blue;ctx.font='bold 32px Arial';ctx.fillText(settings.proprietor||'Proprietor',W-70,y+45);
+ y+=95;rr(55,y,430,150,12,'#fff',blue,3);
+ ctx.fillStyle=navy;ctx.textAlign='center';ctx.font='bold 23px Arial';ctx.fillText(s.name,270,y+48);
+ ctx.fillStyle=ink;ctx.font='20px Arial';ctx.fillText(s.address+', U.P.',270,y+88);
+ ctx.fillStyle=blue;ctx.font='bold 23px Arial';ctx.fillText('★ Your Trust is Our Strength ★',W/2,H-55);
+ return c;
+}
+async function shareInvoice(){
+ let b=collect();if(!b.items.length){alert('पहले सामान का नाम, Qty और Rate भरें।');return}
+ if(!bills.some(x=>x.id===b.id)){if(!commitBill(b))return;renderAll()}
+ renderInvoice(b);
+ const canvas=invoiceCanvas(b);
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+ const file=new File([blob],b.id+'.png',{type:'image/png'});
+ const msg='नमस्ते '+(b.customer||'जी')+', आपका Chaurasiya Traders का बिल '+b.id+' कुल '+money(b.total)+' है। धन्यवाद!';
+ if(navigator.canShare && navigator.canShare({files:[file]})){
+   try{await navigator.share({files:[file],title:'Chaurasiya Traders Bill '+b.id,text:msg});return}catch(e){if(e.name==='AbortError')return}
+ }
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=b.id+'.png';a.click();URL.revokeObjectURL(a.href);
+ const digits=(b.phone||'').replace(/\D/g,'');
+ const wa=digits?'https://wa.me/91'+digits+'?text='+encodeURIComponent(msg):'https://wa.me/?text='+encodeURIComponent(msg);
+ window.open(wa,'_blank');
+ alert('बिल की PNG image डाउनलोड हो गई है। WhatsApp चैट खुलने पर image को attach करके भेजें।');
+}
+function downloadInvoiceImage(){
+ let b=collect();if(!b.items.length){alert('पहले सामान का नाम, Qty और Rate भरें।');return}
+ const c=invoiceCanvas(b);const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=(b.id||'invoice')+'.png';a.click();
+}
+
+function saveProducts(){localStorage.setItem(STOCK,JSON.stringify(products));renderProducts()}
+function addProduct(){let name=$('productName').value.trim(),stock=Number($('productStock').value),sale=Number($('productSale').value);if(!name){alert('सामान का नाम लिखें।');return}if(products.some(p=>p.name.toLowerCase()===name.toLowerCase())){alert('यह सामान पहले से मौजूद है। मौजूदा स्टॉक में माल जोड़ें।');return}if(!Number.isFinite(stock)||stock<0||!Number.isFinite(sale)||sale<0){alert('स्टॉक और बिक्री रेट सही भरें।');return}products.push({id:'P'+Date.now()+Math.random().toString(16).slice(2,6),name,unit:$('productUnit').value,stock,purchaseRate:Number($('productPurchase').value)||0,saleRate:sale,minStock:Number($('productMin').value)||0});saveProducts();$('productName').value='';$('productStock').value='';$('productPurchase').value='';$('productSale').value='';renderBillRows();alert('सामान सेव हो गया। अब बिल में लिस्ट से चुन सकते हैं।')}
+function renderProducts(){$('stockCount').textContent=products.length+' सामान';$('productsEmpty').classList.toggle('hidden',products.length>0);$('productsBody').innerHTML=products.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${p.stock}</td><td>${esc(p.unit)}</td><td>${money(p.purchaseRate)}</td><td>${money(p.saleRate)}</td><td>${p.stock<=p.minStock?'<span style="color:#c0392b;font-weight:700">कम स्टॉक</span>':'<span style="color:#16845b">ठीक</span>'}</td><td><button class="secondary small" onclick="restockProduct('${p.id}')">माल जोड़ें</button> <button class="secondary small" onclick="editProduct('${p.id}')">रेट बदलें</button></td></tr>`).join('')}
+window.restockProduct=id=>{let p=products.find(x=>x.id===id);if(!p)return;let v=prompt(`${p.name} में कितना नया माल जोड़ना है?`, '');if(v===null)return;let n=Number(v);if(!Number.isFinite(n)||n<=0){alert('सही मात्रा लिखें।');return}p.stock=Number((p.stock+n).toFixed(3));saveProducts();renderBillRows()};
+window.editProduct=id=>{let p=products.find(x=>x.id===id);if(!p)return;let v=prompt(`${p.name} का नया बिक्री रेट (₹)`,String(p.saleRate));if(v===null)return;let n=Number(v);if(!Number.isFinite(n)||n<0){alert('सही रेट लिखें।');return}p.saleRate=n;saveProducts();renderBillRows()};
+function renderBillRows(){document.querySelectorAll('#itemsBody tr').forEach(tr=>{let sel=tr.querySelector('.pselect'),id=sel.value,qty=tr.querySelector('.qty').value;sel.innerHTML=productOptions(id);let p=products.find(x=>x.id===id);tr.querySelector('.stockhint').textContent=p?`उपलब्ध: ${p.stock} ${p.unit}`:'';if(p)tr.querySelector('.qty').max=p.stock});calc()}
+function renderHistory(){let q=$('searchBills').value.toLowerCase();let list=bills.filter(b=>(b.id+' '+b.customer+' '+b.phone).toLowerCase().includes(q));$('historyBody').innerHTML=list.map(b=>`<tr><td>${esc(b.id)}</td><td>${esc(b.date)}</td><td>${esc(b.customer||'Cash')}</td><td>${esc(b.phone)}</td><td><b>${money(b.total)}</b></td><td><button class="secondary small" onclick="viewBill('${b.id}')">देखें</button> <button class="danger small" onclick="deleteBill('${b.id}')">हटाएँ</button></td></tr>`).join('');$('historyEmpty').classList.toggle('hidden',list.length>0)}
+window.viewBill=id=>{let b=bills.find(x=>x.id===id);if(b){showTab('billing');renderInvoice(b);window.scrollTo(0,document.body.scrollHeight)}};
+window.deleteBill=id=>{if(confirm('क्या यह बिल हटाना चाहते हैं?')){bills=bills.filter(x=>x.id!==id);localStorage.setItem(KEY,JSON.stringify(bills));renderAll()}};
+function renderDashboard(){let sum=bills.reduce((s,b)=>s+b.total,0),tod=bills.filter(b=>b.date===today()).reduce((s,b)=>s+b.total,0);$('statBills').textContent=bills.length;$('statSales').textContent=money(sum);$('statToday').textContent=money(tod);$('recentBills').innerHTML=bills.slice(0,5).map(b=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)"><span>${esc(b.id)} · ${esc(b.customer||'Cash')}</span><b>${money(b.total)}</b></div>`).join('')||'अभी कोई रिकॉर्ड नहीं है।'}
+function renderAll(){renderHistory();renderDashboard();renderProducts();let s=shop();$('shopMini').innerHTML=`<b>${esc(s.name)}</b><br>${esc(s.address)}<br>${esc(s.phone)}`}
+function showTab(tab){document.querySelectorAll('main>section').forEach(s=>s.classList.toggle('hidden',s.id!==tab));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='history')renderHistory();if(tab==='dashboard')renderDashboard();if(tab==='inventory')renderProducts()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$('addRow').onclick=()=>addRow();$('gst').oninput=calc;$('discount').oninput=calc;$('savePrint').onclick=()=>saveBill(false);$('shareWhatsApp').onclick=shareInvoice;$('downloadImage').onclick=downloadInvoiceImage;$('preview').onclick=()=>renderInvoice(collect());$('clear').onclick=()=>{if(confirm('नया बिल शुरू करें? अभी भरा हुआ डेटा हट जाएगा।'))setNewBill()};$('searchBills').oninput=renderHistory;
+$('addProduct').onclick=addProduct;
+$('saveSettings').onclick=()=>{settings={name:$('shopName').value.trim()||'CHAURASIYA TRADERS',phone:$('shopPhone').value.trim(),address:$('shopAddress').value.trim(),gstin:$('shopGst').value.trim(),footer:$('footerText').value.trim(),proprietor:$('proprietor').value.trim()};localStorage.setItem(SETTINGS,JSON.stringify(settings));renderAll();alert('सेटिंग्स सेव हो गईं।')};
+function loadSettings(){$('shopName').value=settings.name||'CHAURASIYA TRADERS';$('shopPhone').value=settings.phone||'9919496051';$('shopAddress').value=settings.address||'Karma Bazzar, Siddharth Nagar';$('shopGst').value=settings.gstin||'09GUAPK5751C1ZO';$('footerText').value=settings.footer||'धन्यवाद! फिर पधारें।'}
+$('exportData').onclick=()=>{let blob=new Blob([JSON.stringify({bills,settings,products,seq:localStorage.getItem('ct_bill_seq')||'0'},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='chaurasiya-traders-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('importData').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!Array.isArray(d.bills))throw Error();if(!confirm('मौजूदा डेटा की जगह बैकअप लोड करें?'))return;bills=d.bills;settings=d.settings||{};products=Array.isArray(d.products)?d.products:products;localStorage.setItem(STOCK,JSON.stringify(products));localStorage.setItem(KEY,JSON.stringify(bills));localStorage.setItem(SETTINGS,JSON.stringify(settings));localStorage.setItem('ct_bill_seq',d.seq||String(bills.length));loadSettings();renderAll();alert('बैकअप Restore हो गया।')}catch(_){alert('यह बैकअप फ़ाइल सही नहीं है।')}e.target.value=''};
+loadSettings();setNewBill();renderAll();
+</script>
+</body></html>
